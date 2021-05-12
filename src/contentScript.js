@@ -69,22 +69,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
       if (lastLevelArr.length) {
         const lastLevel = lastLevelArr[lastLevelArr.length - 1]
-        const lastType = lastTypeArr[lastTypeArr.length - 1]
-        if (lastLevel === level) {
-          switch (lastType) {
-            case 'object': 
-              str += '},'
-              strArr.push({ str: '},', level: level + 1 })
-              lastLevelArr.pop()
-              lastTypeArr.pop()
-              break
-            case 'array': 
-              str += '}>,'
-              strArr.push({ str: '}>,', level: level + 1 })
-              lastLevelArr.pop()
-              lastTypeArr.pop()
-            default:
-              // do nothing
+
+        if (lastLevel >= level) {
+
+          let count = lastLevel - level
+          let tempLevel
+
+          for (let i = 0; i <= count; i++) {
+            const lastType = lastTypeArr.pop()
+            switch (lastType) {
+              case 'object': 
+                str += '},'
+                tempLevel = lastLevelArr.pop()
+                strArr.push({ str: '},', level: tempLevel + 1 })
+                
+                break
+              case 'array': 
+                str += '}>,'
+                tempLevel = lastLevelArr.pop()
+                strArr.push({ str: '}>,', level: tempLevel + 1 })
+                
+                break
+              default:
+                // do nothing
+            }
           }
         }
       }
@@ -117,7 +125,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           case 'object': 
             str += '},'
             tempLevel = lastLevelArr.pop()
-            strArr.push({ str: '},', level: tempLevel })
+            strArr.push({ str: '},', level: tempLevel + 1 })
             lastTypeArr.pop()
             break
           case 'array': 
