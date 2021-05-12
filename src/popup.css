@@ -19,8 +19,14 @@ body {
     height: 300px;
 }
 
+#content {
+    width: 350px;
+    height: 500px;
+    overflow: auto;
+    padding: 20px;
+}
+
 .app {
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

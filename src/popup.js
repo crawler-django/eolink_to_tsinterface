@@ -29,19 +29,33 @@ import './popup.css';
   };
 
   function setupCounter(initialValue = 0) {
-    document.getElementById('counter').innerHTML = initialValue;
 
-    document.getElementById('incrementBtn').addEventListener('click', () => {
-      updateCounter({
-        type: 'INCREMENT',
-      });
-    });
+    document.getElementById('btn').onclick = () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        const tab = tabs[0];
 
-    document.getElementById('decrementBtn').addEventListener('click', () => {
-      updateCounter({
-        type: 'DECREMENT',
+        chrome.tabs.sendMessage(
+          tab.id,
+          {
+            type: 'CRAWLER',
+          },
+          response => {
+
+            const { str, strArr } = response
+
+            let temp = `<div>`
+
+            for (let i = 0; i < strArr.length; i++) {
+              temp += `<div style="padding-left: ${strArr[i].level * 20}px">${strArr[i].str}</div>`
+            }
+
+            temp += `</div>`
+
+            document.getElementById('content').innerHTML = temp
+          }
+        );
       });
-    });
+    }
   }
 
   function updateCounter({ type }) {
@@ -96,6 +110,7 @@ import './popup.css';
   }
 
   document.addEventListener('DOMContentLoaded', restoreCounter);
+  // document.addEventListener('DOMSubtreeModified', restoreCounter);
 
   // Communicate with background file by sending a message
   chrome.runtime.sendMessage(
